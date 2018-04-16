@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8" />
+    <title>Neurona</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+
+    <!-- ================== BEGIN BASE CSS STYLE ================== -->
+    <link href="{{ url_for('static', filename='assets/plugins/jquery-ui/themes/base/minified/jquery-ui.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='assets/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='assets/plugins/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='assets/plugins/ionicons/css/ionicons.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='assets/css/animate.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='assets/css/style.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='assets/css/style-responsive.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='assets/css/theme/default.css') }}" rel="stylesheet" id="theme" />
+    <!-- ================== END BASE CSS STYLE ================== -->
+    <!-- ================== BEGIN BASE JS ================== -->
+    <script src="{{ url_for('static', filename='assets/plugins/pace/pace.min.js') }}"></script>
+    <!-- ================== END BASE JS ================== -->
+
+</head>
+<body>
+<!-- begin #page-loader -->
+<div id="page-loader" class="fade in"><span class="spinner"></span></div>
+<!-- end #page-loader -->
+
+<!-- begin #page-container -->
+<div id="page-container" class="fade page-without-sidebar page-header-fixed">
+    <!-- begin #header -->
+    <div id="header" class="header navbar navbar-default navbar-fixed-top">
+        <!-- begin container-fluid -->
+        <div class="container-fluid">
+            <!-- begin mobile sidebar expand / collapse button -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-click="sidebar-toggled">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <!-- end mobile sidebar expand / collapse button -->
+            <!-- begin header navigation right -->
+            <form method="post">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <div class="form-group navbar-form full-width" style="text-align: center">
+                            <label class="form-control" id="umbral">
+                                {% if session["pesos"] %}
+                                    {{ session["pesos"][0] }}
+                                {% else %}
+                                    Umbral
+                                {% endif %}
+                            </label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-group navbar-form full-width" style="text-align: center">
+                            <label class="form-control" id="peso1">
+                                {% if session["pesos"] %}
+                                    {{ session["pesos"][1] }}
+                                {% else %}
+                                    Peso 1
+                                {% endif %}
+                            </label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-group navbar-form full-width" style="text-align: center">
+                            <label class="form-control" id="peso2">
+                                {% if session["pesos"] %}
+                                    {{ session["pesos"][2] }}
+                                {% else %}
+                                    Peso 2
+                                {% endif %}
+                            </label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-group navbar-form full-width" style="text-align: center">
+                            <label class="form-control" id="peso2">
+                                {% if errors %}
+                                    {{ errors | length }}
+                                {% else %}
+                                    Repeticiones
+                                {% endif %}
+                            </label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-group navbar-form full-width" style="text-align: center">
+                            <input class="form-control" name="umbral" placeholder="umbral"/>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-group navbar-form full-width" style="text-align: center">
+                            <input class="form-control" name="aprendizaje" placeholder="aprendizaje" required/>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-group navbar-form full-width">
+                            <select class="form-control navbar-form full-width" name="compuerta">
+                                <option value="and">AND</option>
+                                <option value="and">OR</option>
+                                <option value="and">NAND</option>
+                                <option value="and">NOR</option>
+                            </select>
+                        </div>
+                    </li>
+                    <li class="dropdown navbar-user">
+                        <button class="btn form-control" >Entrenar </button>
+                    </li>
+                </ul>
+            </form>
+            <!-- end header navigation right -->
+        </div>
+        <!-- end container-fluid -->
+    </div>
+    <!-- end #header -->
+
+    <!-- begin #content -->
+    <div id="content" class="content">
+        <div class="panel panel-inverse" style="margin-top: 150px">
+            <div class="panel-heading">
+                <div class="panel-heading-btn">
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-reload"><i class="fa fa-repeat"></i></a>
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger" data-click="panel-remove"><i class="fa fa-times"></i></a>
+                </div>
+                <h4 class="panel-title">Neurona Perceptrón</h4>
+            </div>
+            <div class="panel-body">
+                <form class="col-md-6 col-md-offset-3" id="clase-form">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" >Entrada 1</label>
+                        <div class="col-md-9">
+                            <input type="number" min="0" max="1" class="form-control" name="x1"  placeholder="Entrada 1" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">Entrada 2</label>
+                        <div class="col-md-9">
+                            <input type="number" min="0" max="1" class="form-control" name="x2" placeholder="Entrada 2" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-9 col-md-offset-3">
+                            <button class="form-control btn-info">Calcular</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="form-group col-md-6 col-md-offset-3">
+                    <label class="col-md-3 control-label">Respuesta</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" placeholder="Respuesta" id="respuesta" readonly/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-inverse">
+            <div class="panel-heading">
+                <div class="panel-heading-btn">
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-reload"><i class="fa fa-repeat"></i></a>
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger" data-click="panel-remove"><i class="fa fa-times"></i></a>
+                </div>
+                <h4 class="panel-title">Neurona Perceptrón</h4>
+            </div>
+            <div class="panel-body">
+                <div>
+                    <canvas id="line-chart" data-render="chart-js" width="100px" height="40px"></canvas>
+                    <canvas id="pesos-chart" data-render="chart-js" width="100px" height="40px"></canvas>
+                    <canvas id="points-chart" width="100px" height="40px"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end #content -->
+    <!-- begin scroll to top btn -->
+    <a href="javascript:;" class="btn btn-icon btn-circle btn-primary btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
+    <!-- end scroll to top btn -->
+</div>
+<!-- end page container -->
+<!-- ================== BEGIN BASE JS ================== -->
+<script src="{{ url_for('static', filename='assets/plugins/jquery/jquery-1.9.1.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/plugins/jquery/jquery-migrate-1.1.0.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/plugins/jquery-ui/ui/minified/jquery-ui.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
+<!--[if lt IE 9]>
+		<script src="{{ url_for('static', filename='assets/crossbrowserjs/html5shiv.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/crossbrowserjs/respond.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/crossbrowserjs/excanvas.min.js') }}"></script>
+	<![endif]-->
+<script src="{{ url_for('static', filename='assets/plugins/slimscroll/jquery.slimscroll.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/plugins/jquery-cookie/jquery.cookie.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/plugins/chart-js/Chart.min.js') }}"></script>
+<!-- ================== END BASE JS ================== -->
+
+<!-- ================== BEGIN PAGE LEVEL JS ================== -->
+<script src="{{ url_for('static', filename='assets/js/apps.min.js') }}"></script>
+<!-- ================== END PAGE LEVEL JS ================== -->
+<script>"use strict";
+
+$("#clase-form").on("submit", function (e) {
+    e.preventDefault();
+    $.ajax({
+        type:"POST",
+        url: "/calcular",
+        data: $(this).serialize(),
+        success: function (data){
+            $('#respuesta').val(data)
+        }
+    });
+});
+</script>
+<script>"use strict";
+
+$(document).ready(function() {
+    // white
+    var gtx = document.querySelector('#points-chart');
+    var gCtx = gtx.getContext('2d');
+    var white = 'rgba(255,255,255,1.0)';
+    var fillBlack = 'rgba(17, 17, 17, 0.6)';
+    var fillBlackLight = 'rgba(17, 17, 17, 0.2)';
+    var strokeBlack = 'rgba(17, 17, 17, 0.8)';
+    var highlightFillBlack = 'rgba(17, 17, 17, 0.8)';
+    var highlightStrokeBlack = 'rgba(17, 17, 17, 1)';
+
+// blue
+    var fillBlue = 'rgba(52, 143, 226, 0.6)';
+    var fillBlueLight = 'rgba(52, 143, 226, 0.2)';
+    var strokeBlue = 'rgba(52, 143, 226, 0.8)';
+    var highlightFillBlue = 'rgba(52, 143, 226, 0.8)';
+    var highlightStrokeBlue = 'rgba(52, 143, 226, 1)';
+    // grey
+    var fillGrey = 'rgba(78, 78, 78, 0.6)';
+    var fillGreyLight = 'rgba(78, 78, 78, 0.2)';
+    var strokeGrey = 'rgba(78, 78, 78, 0.8)';
+    var highlightFillGrey = 'rgba(78, 78, 78, 0.8)';
+    var highlightStrokeGrey = 'rgba(78, 78, 78, 1)';
+
+// green
+    var fillGreen = 'rgba(76, 217, 100, 0.6)';
+    var fillGreenLight = 'rgba(76, 217, 100, 0.2)';
+    var strokeGreen = 'rgba(76, 217, 100, 0.8)';
+    var highlightFillGreen = 'rgba(76, 217, 100, 0.8)';
+    var highlightStrokeGreen = 'rgba(76, 217, 100, 1)';
+
+// purple
+    var fillPurple = 'rgba(88, 86, 214, 0.6)';
+    var fillPurpleLight = 'rgba(88, 86, 214, 0.2)';
+    var strokePurple = 'rgba(88, 86, 214, 0.8)';
+    var highlightFillPurple = 'rgba(88, 86, 214, 0.8)';
+    var highlightStrokePurple = 'rgba(88, 86, 214, 1)';
+
+    var ctx = $("#line-chart");
+    var ctx1 = $("#points-chart");
+    var ctx2 = $("#pesos-chart");
+    var lineChartData = {
+        labels: {{ escala }},
+        datasets: [{
+            label: 'Error',
+            borderColor: strokeBlue,
+            pointBackgroundColor: strokeBlue,
+            pointRadius: 2,
+            borderWidth: 2,
+            backgroundColor: fillBlueLight,
+            data: {{ errors }}
+        }]
+    };
+    var pesosChartData = {
+        labels: {{ escala_delta }},
+        datasets: [{
+            label: 'Umbral',
+            borderColor: strokeBlue,
+            pointBackgroundColor: strokeBlue,
+            pointRadius: 2,
+            borderWidth: 2,
+            backgroundColor: fillBlueLight,
+            data: {{ delta_pesos[0] }}
+        },
+            {
+                label: 'Peso1',
+                borderColor: strokePurple,
+                pointBackgroundColor: strokePurple,
+                pointRadius: 2,
+                borderWidth: 2,
+                backgroundColor: fillPurpleLight,
+                data: {{ delta_pesos[1] }}
+            },
+            {
+                label: 'Peso2',
+                borderColor: strokeGreen,
+                pointBackgroundColor: strokeGreen,
+                pointRadius: 2,
+                borderWidth: 2,
+                backgroundColor: fillGreenLight,
+                data: {{ delta_pesos[2] }}
+            }]
+    };
+    var pointChartData = {
+        labels: {{ x }},
+        datasets: [
+            {
+                pointRadius: 3,
+                borderWidth: 2,
+                backgroundColor:'rgba(0,0,0,0)',
+                type: 'scatter',
+                data: [
+                    {
+                        x: 0,
+                        y: 1
+                    },
+                    {
+                        x: 0.1,
+                        y: 1
+                    },
+                    {
+                        x: 0.2,
+                        y: 1
+                    },
+                    {
+                        x: 0.3,
+                        y: 1
+                    },
+                    {
+                        x: 0.4,
+                        y: 1
+                    },
+                    {
+                        x: 0.5,
+                        y: 1
+                    },
+                    {
+                        x: 0.6,
+                        y: 1
+                    },
+                    {
+                        x: 0.7,
+                        y: 1
+                    },
+                    {
+                        x: 0.8,
+                        y: 1
+                    },
+                    {
+                        x: 0.9,
+                        y: 1
+                    },
+                    {
+                        x: 1,
+                        y: 1
+                    }
+                ]
+            },
+            {
+                borderColor: strokeGrey,
+                pointBackgroundColor: 'rgba(0,0,0,0)',
+                backgroundColor:'rgba(0,0,0,0)',
+                pointRadius: 3,
+                borderWidth: 2,
+                data: {{ y }}
+            }
+        ]
+    };
+    var lineChart = new Chart(ctx, {
+        type: 'line',
+        data: lineChartData
+    });
+    var pesosChart = new Chart(ctx2, {
+        type: 'line',
+        data: pesosChartData
+    });
+    var points = new Chart(ctx1, {
+        type: 'line',
+        data: pointChartData,
+        options: {
+            legend: {
+                display: false
+            }
+        }
+    });
+
+    gCtx.strokeStyle = '#f00';
+    gCtx.lineWidth = 15;
+    gCtx.beginPath();
+    gCtx.moveTo(0,400);
+    gCtx.lineTo(50,400);
+    gCtx.stroke();
+
+    App.init();
+});
+</script>
+</body>
+</html>
