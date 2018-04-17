@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8" />
+    <title>Multicapa</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+
+    <!-- ================== BEGIN BASE CSS STYLE ================== -->
+    <link href="{{ url_for('static', filename='assets/plugins/jquery-ui/themes/base/minified/jquery-ui.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='assets/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='assets/plugins/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='assets/plugins/ionicons/css/ionicons.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='assets/css/animate.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='assets/css/style.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='assets/css/style-responsive.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='assets/css/theme/default.css') }}" rel="stylesheet" id="theme" />
+    <!-- ================== END BASE CSS STYLE ================== -->
+    <!-- ================== BEGIN BASE JS ================== -->
+    <script src="{{ url_for('static', filename='assets/plugins/pace/pace.min.js') }}"></script>
+    <!-- ================== END BASE JS ================== -->
+
+</head>
+<body>
+<!-- begin #page-loader -->
+<div id="page-loader" class="fade in"><span class="spinner"></span></div>
+<!-- end #page-loader -->
+
+<!-- begin #page-container -->
+<div id="page-container" class="fade page-without-sidebar page-header-fixed">
+    <div class="panel panel-inverse">
+        <div class="panel-heading" style="text-align: center">Perceptrón multicapa</div>
+        <div class="panel-body">
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <div class="panel-heading-btn">
+                        <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
+                    </div>
+                    Pesos por neurona
+                </div>
+                <div class="panel-body" style="background: lightgrey">
+                    <div class="row">
+                        <form method="post">
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="panel panel-inverse">
+                                            <div class="panel-heading">Neurona in 1</div>
+                                            <div class="panel-body">
+                                                <div class="form-horizontal">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            {% if session["pesos_1"] %}
+                                                                <input class="form-control" placeholder="Umbral" name="un1" value="{{ session["pesos_1"][0] }}"/>
+                                                            {% else %}
+                                                                <input class="form-control" placeholder="Umbral" name="un1"/>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <input class="form-control" placeholder="Coef. Entrenamiento" name="en1" required/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="form-control">
+                                                                {% if session["pesos_1"] %}
+                                                                    {{ session["pesos_1"][1] }}
+                                                                {% else %}
+                                                                    Peso1
+                                                                {% endif %}
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-control">
+                                                                {% if session["pesos_1"] %}
+                                                                    {{ session["pesos_1"][2] }}
+                                                                {% else %}
+                                                                    Peso2
+                                                                {% endif %}
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            <label class="form-control">
+                                                                {% if errors_1 %}
+                                                                    {{ errors_1 | length }} iteraciones
+                                                                {% else %}
+                                                                    Repeticiones
+                                                                {% endif %}
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="panel panel-inverse">
+                                            <div class="panel-heading">Neurona in 2</div>
+                                            <div class="panel-body">
+                                                <div class="form-horizontal">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            {% if session["pesos_2"] %}
+                                                                <input class="form-control" placeholder="Umbral" name="un2" value="{{ session["pesos_2"][0] }}"/>
+                                                            {% else %}
+                                                                <input class="form-control" placeholder="Umbral" name="un2"/>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <input class="form-control" placeholder="Coef. Entrenamiento" name="en2" required/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="form-control">
+                                                                {% if session["pesos_2"] %}
+                                                                    {{ session["pesos_2"][1] }}
+                                                                {% else %}
+                                                                    Peso1
+                                                                {% endif %}
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-control">
+                                                                {% if session["pesos_2"] %}
+                                                                    {{ session["pesos_2"][2] }}
+                                                                {% else %}
+                                                                    Peso2
+                                                                {% endif %}
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            <label class="form-control">
+                                                                {% if errors_2 %}
+                                                                    {{ errors_2 | length }} iteraciones
+                                                                {% else %}
+                                                                    Repeticiones
+                                                                {% endif %}
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row"><button class="btn btn-block btn-primary">Entrenar</button></div>
+                            </div>
+                        </form>
+                        <form>
+                            <div class="col-md-4">
+                                <div class="row">
+                                    <div class="panel panel-inverse">
+                                        <div class="panel-heading">Calcular</div>
+                                        <div class="panel-body">
+                                            <div class="form-group">
+                                                <input class="form-control" placeholder="Entrada 1">
+                                            </div>
+                                            <div class="form-group">
+                                                <input class="form-control" placeholder="Entrada 2">
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-control" placeholder="Entrada 1">Salida</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row"><button class="btn btn-block btn-inverse">Calcular</button></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-inverse">
+                <div class="panel-heading">Gráficas</div>
+                <div class="panel-body" style="background: lightgrey">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="panel">
+                                <ul class="nav nav-tabs">
+                                    <li class="active">
+                                        <a href="#en1" data-toggle="tab">
+                                            <span class="visible-xs">Error N 1</span>
+                                            <span class="hidden-xs">Error neurona 1</span>
+                                        </a>
+                                    </li>
+                                    <li class="">
+                                        <a href="#dpn1" data-toggle="tab">
+                                            <span class="visible-xs">Deltapesos N 1</span>
+                                            <span class="hidden-xs">Deltapesos neurona 1</span>
+                                        </a>
+                                    </li>
+                                    <li class="">
+                                        <a href="#en2" data-toggle="tab">
+                                            <span class="visible-xs">Error N 2</span>
+                                            <span class="hidden-xs">Error neurona 2</span>
+                                        </a>
+                                    </li>
+                                    <li class="">
+                                        <a href="#dpn2" data-toggle="tab">
+                                            <span class="visible-xs">Deltapesos N 2</span>
+                                            <span class="hidden-xs">Deltapesos neurona 2</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade active in" id="en1">
+                                        <canvas id="line-chart-n1" data-render="chart-js"></canvas>
+                                    </div>
+                                    <div class="tab-pane fade" id="dpn1">
+                                        <canvas id="pesos-chart-n1" data-render="chart-js"></canvas>
+                                    </div>
+                                    <div class="tab-pane fade" id="en2">
+                                        <canvas id="line-chart-n2" data-render="chart-js"></canvas>
+                                    </div>
+                                    <div class="tab-pane fade" id="dpn2">
+                                        <canvas id="pesos-chart-n2" data-render="chart-js"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="panel panel-inverse">
+                                <div class="panel-heading">
+                                    <div class="panel-heading-btn">
+                                        <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+                                    </div>
+                                    Gráfica entrenamiento
+                                </div>
+                                <div class="panel-body">
+                                    Grafica final
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end page container -->
+<!-- ================== BEGIN BASE JS ================== -->
+<script src="{{ url_for('static', filename='assets/plugins/jquery/jquery-1.9.1.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/plugins/jquery/jquery-migrate-1.1.0.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/plugins/jquery-ui/ui/minified/jquery-ui.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
+<!--[if lt IE 9]>
+		<script src="{{ url_for('static', filename='assets/crossbrowserjs/html5shiv.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/crossbrowserjs/respond.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='assets/crossbrowserjs/excanvas.min.js') }}"></script>
+	<![endif]-->
+<script src="{{ url_for('static', filename='assets/plugins/slimscroll/jquery.slimscroll.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/plugins/jquery-cookie/jquery.cookie.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/plugins/chart-js/Chart.min.js') }}"></script>
+<!-- ================== END BASE JS ================== -->
+
+<!-- ================== BEGIN PAGE LEVEL JS ================== -->
+<script src="{{ url_for('static', filename='assets/js/apps.min.js') }}"></script>
+<!-- ================== END PAGE LEVEL JS ================== -->
+<script>"use strict";
+$(document).ready(function() {
+    var fillBlueLight = 'rgba(52, 143, 226, 0.2)';
+    var strokeBlue = 'rgba(52, 143, 226, 0.8)';
+    var strokeGrey = 'rgba(78, 78, 78, 0.8)';
+    var fillGreenLight = 'rgba(76, 217, 100, 0.2)';
+    var strokeGreen = 'rgba(76, 217, 100, 0.8)';
+    var fillPurpleLight = 'rgba(88, 86, 214, 0.2)';
+    var strokePurple = 'rgba(88, 86, 214, 0.8)';
+
+    //Error
+    var ctx_1 = $("#line-chart-n1");
+    var ctx_2 = $("#line-chart-n2");
+    var lineChartData_1 = {
+        labels: {{ escala_1 }},
+        datasets: [{
+            label: 'Error',
+            borderColor: strokeBlue,
+            pointBackgroundColor: strokeBlue,
+            pointRadius: 2,
+            borderWidth: 2,
+            backgroundColor: fillBlueLight,
+            data: {{ errors_1 }}
+        }]
+    };
+    var lineChartData_2 = {
+        labels: {{ escala_2 }},
+        datasets: [{
+            label: 'Error',
+            borderColor: strokeBlue,
+            pointBackgroundColor: strokeBlue,
+            pointRadius: 2,
+            borderWidth: 2,
+            backgroundColor: fillBlueLight,
+            data: {{ errors_2 }}
+        }]
+    };
+    var lineChart_1 = new Chart(ctx_1, {
+        type: 'line',
+        data: lineChartData_1
+    });
+    var lineChart_2 = new Chart(ctx_2, {
+        type: 'line',
+        data: lineChartData_2
+    });
+
+
+    //DeltaPesos
+    var ctx2_1 = $("#pesos-chart-n1");
+    var ctx2_2 = $("#pesos-chart-n2");
+    var pesosChartData_1 = {
+        labels: {{ escala_delta_1 }},
+        datasets: [{
+            label: 'Umbral',
+            borderColor: strokeBlue,
+            pointBackgroundColor: strokeBlue,
+            pointRadius: 2,
+            borderWidth: 2,
+            backgroundColor: fillBlueLight,
+            data: {{ delta_pesos_1[0] }}
+        },
+            {
+                label: 'Peso1',
+                borderColor: strokePurple,
+                pointBackgroundColor: strokePurple,
+                pointRadius: 2,
+                borderWidth: 2,
+                backgroundColor: fillPurpleLight,
+                data: {{ delta_pesos_1[1] }}
+            },
+            {
+                label: 'Peso2',
+                borderColor: strokeGreen,
+                pointBackgroundColor: strokeGreen,
+                pointRadius: 2,
+                borderWidth: 2,
+                backgroundColor: fillGreenLight,
+                data: {{ delta_pesos_1[2] }}
+            }]
+    };
+    var pesosChartData_2 = {
+        labels: {{ escala_delta_2 }},
+        datasets: [{
+            label: 'Umbral',
+            borderColor: strokeBlue,
+            pointBackgroundColor: strokeBlue,
+            pointRadius: 2,
+            borderWidth: 2,
+            backgroundColor: fillBlueLight,
+            data: {{ delta_pesos_2[0] }}
+        },
+            {
+                label: 'Peso1',
+                borderColor: strokePurple,
+                pointBackgroundColor: strokePurple,
+                pointRadius: 2,
+                borderWidth: 2,
+                backgroundColor: fillPurpleLight,
+                data: {{ delta_pesos_2[1] }}
+            },
+            {
+                label: 'Peso2',
+                borderColor: strokeGreen,
+                pointBackgroundColor: strokeGreen,
+                pointRadius: 2,
+                borderWidth: 2,
+                backgroundColor: fillGreenLight,
+                data: {{ delta_pesos_2[2] }}
+            }]
+    };
+    var pesosChart_1 = new Chart(ctx2_1, {
+        type: 'line',
+        data: pesosChartData_1
+    });
+    var pesosChart_2 = new Chart(ctx2_2, {
+        type: 'line',
+        data: pesosChartData_2
+    });
+})
+</script>
+<script>
+    App.init();
+</script>
+</body>
+</html>
+

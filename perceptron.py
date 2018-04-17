@@ -48,6 +48,7 @@ def hello_world():
     escala_delta = [1]
     if request.method == "POST":
         form = request.form
+        flag = True
         compuerta = form["compuerta"]
         tasa_de_aprendizaje = float(form["aprendizaje"])
         delta_pesos = [
@@ -57,8 +58,17 @@ def hello_world():
         ]
 
         pesos = [random.random() for i in range(0, 3)]
+        print ('antes del if')
         if form["umbral"]:
-            pesos[0] = float(form["umbral"])
+            if form["umbral"] == '0':
+                pesos[0] = 0
+                flag = False
+                print ('umbral 0')
+            else:
+                pesos[0] = float(form["umbral"])
+                flag = True
+                print('umbral !0')
+
         training_data = []
         if compuerta == "and":
             training_data_and = [(array([1, 1, 1]), 1),
@@ -108,13 +118,21 @@ def hello_world():
             if contador_de_errores == 0:
                 session["pesos"] = pesos
                 break
-
-        m = (-1 * pesos[1]) / pesos[2]
-        b = -pesos[0] / pesos[2]
-        escala = [i for i in range(0, len(errors))]
-        escala_delta = [i for i in range(0, len(delta_pesos[0]))]
-        xs = [round(i * 0.1, 1) for i in range(0, 12)]
-        ys = [lineal(i, m, b) for i in xs]
+        if flag:
+            m = (-1 * pesos[1]) / pesos[2]
+            b = -pesos[0] / pesos[2]
+            escala = [i for i in range(0, len(errors))]
+            escala_delta = [i for i in range(0, len(delta_pesos[0]))]
+            xs = [round(i * 0.1, 1) for i in range(0, 12)]
+            ys = [lineal(i, m, b) for i in xs]
+        else:
+            m = (-1 * pesos[1]) / pesos[2]
+            b = 0
+            pesos[0] = 0
+            escala = [i for i in range(0, len(errors))]
+            escala_delta = [i for i in range(0, len(delta_pesos[0]))]
+            xs = [round(i * 0.1, 1) for i in range(0, 12)]
+            ys = [lineal(i, m, b) for i in xs]
     return render_template('home.html', errors=errors, escala=escala, x=xs, y=ys, delta_pesos=delta_pesos,
                            escala_delta=escala_delta)
 
