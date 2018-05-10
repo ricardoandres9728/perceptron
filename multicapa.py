@@ -26,10 +26,13 @@ def calcular():
     form = request.form
     x1 = int(form["x1"])
     x2 = int(form["x2"])
-    pesos = session["pesos"]
-
-    net = (x1 * pesos[1] + x2 * pesos[2] + pesos[0])
-    resultado = funcion_activacion(net)
+    pesos_1 = session["pesos_1"]
+    pesos_2 = session["pesos_2"]
+    net_1 = (x1 * pesos_1[1] + x2 * pesos_1[2] + pesos_1[0])
+    net_2 = (x1 * pesos_2[1] + x2 * pesos_2[2] + pesos_2[0])
+    resultado_1 = funcion_activacion(net_1)
+    resultado_2 = funcion_activacion(net_2)
+    resultado = resultado_1 + resultado_2
     return jsonify(resultado)
 
 
@@ -140,11 +143,9 @@ def hello_world():
             escala_2 = [i for i in range(0, len(errors_2))]
             escala_delta_1 = [i for i in range(0, len(delta_pesos_1[0]))]
             escala_delta_2 = [i for i in range(0, len(delta_pesos_2[0]))]
-            print(escala_delta_1)
-            xs_1 = [round(i * 0.1, 1) for i in range(0, 12)]
-            xs_1 = [round(i * 0.1, 1) for i in range(0, 12)]
+            xs_1 = [round(i * 0.1, 1) for i in range(0, 10)]
             ys_1 = [lineal(i, m_1, b_1) for i in xs_1]
-            ys_2 = [lineal(i, m_2, b_2) for i in xs_2]
+            ys_2 = [lineal(i, m_2, b_2) for i in xs_1]
         else:
             m_1 = (-1 * pesos_1[1]) / pesos_1[2]
             m_2 = (-1 * pesos_2[1]) / pesos_2[2]
@@ -156,10 +157,10 @@ def hello_world():
             escala_2 = [i for i in range(0, len(errors_2))]
             escala_delta_1 = [i for i in range(0, len(delta_pesos_1[0]))]
             escala_delta_2 = [i for i in range(0, len(delta_pesos_2[0]))]
-            xs_1 = [round(i * 0.1, 1) for i in range(0, 12)]
-            xs_1 = [round(i * 0.1, 1) for i in range(0, 12)]
+            xs_1 = [round(i * 0.1, 1) for i in range(0, 10)]
             ys_1 = [lineal(i, m_1, b_1) for i in xs_1]
-            ys_2 = [lineal(i, m_2, b_2) for i in xs_2]
+            ys_2 = [lineal(i, m_2, b_2) for i in xs_1]
+
     return render_template('multicapa.html', errors_1=errors_1, errors_2=errors_2, escala_1=escala_1, escala_2=escala_2,
                            x_1=xs_1, x_2=xs_2, y_1=ys_1, y_2=ys_2, delta_pesos_1=delta_pesos_1, delta_pesos_2=delta_pesos_2,
                            escala_delta_1=escala_delta_1, escala_delta_2=escala_delta_2,)

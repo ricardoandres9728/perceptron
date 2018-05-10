@@ -155,20 +155,20 @@
                                 <div class="row"><button class="btn btn-block btn-primary">Entrenar</button></div>
                             </div>
                         </form>
-                        <form>
+                        <form id="form-calcular">
                             <div class="col-md-4">
                                 <div class="row">
                                     <div class="panel panel-inverse">
                                         <div class="panel-heading">Calcular</div>
                                         <div class="panel-body">
                                             <div class="form-group">
-                                                <input class="form-control" placeholder="Entrada 1">
+                                                <input name="x1" class="form-control" placeholder="Entrada 1">
                                             </div>
                                             <div class="form-group">
-                                                <input class="form-control" placeholder="Entrada 2">
+                                                <input name="x2" class="form-control" placeholder="Entrada 2">
                                             </div>
                                             <div class="form-group">
-                                                <label class="form-control" placeholder="Entrada 1">Salida</label>
+                                                <label id="respuesta" class="form-control">Salida</label>
                                             </div>
                                         </div>
                                     </div>
@@ -183,7 +183,7 @@
                 <div class="panel-heading">Gráficas</div>
                 <div class="panel-body" style="background: lightgrey">
                     <div class="row">
-                        <div class="col-md-8">
+                        <div class="col-md-12">
                             <div class="panel">
                                 <ul class="nav nav-tabs">
                                     <li class="active">
@@ -210,6 +210,12 @@
                                             <span class="hidden-xs">Deltapesos neurona 2</span>
                                         </a>
                                     </li>
+                                    <li class="">
+                                        <a href="#grafica" data-toggle="tab">
+                                            <span class="visible-xs">Gráfica</span>
+                                            <span class="hidden-xs">Grafica total</span>
+                                        </a>
+                                    </li>
                                 </ul>
                                 <div class="tab-content">
                                     <div class="tab-pane fade active in" id="en1">
@@ -224,19 +230,9 @@
                                     <div class="tab-pane fade" id="dpn2">
                                         <canvas id="pesos-chart-n2" data-render="chart-js"></canvas>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="panel panel-inverse">
-                                <div class="panel-heading">
-                                    <div class="panel-heading-btn">
-                                        <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+                                    <div class="tab-pane fade" id="grafica">
+                                        <canvas id="points-chart" width="100px" height="40px"></canvas>
                                     </div>
-                                    Gráfica entrenamiento
-                                </div>
-                                <div class="panel-body">
-                                    Grafica final
                                 </div>
                             </div>
                         </div>
@@ -266,6 +262,19 @@
 <script src="{{ url_for('static', filename='assets/js/apps.min.js') }}"></script>
 <!-- ================== END PAGE LEVEL JS ================== -->
 <script>"use strict";
+$("#form-calcular").on("submit", function (e) {
+    e.preventDefault();
+    $.ajax({
+        type:"POST",
+        url: "/calcular",
+        data: $(this).serialize(),
+        success: function (data){
+            $('#respuesta').text(data);
+        }
+    });
+});
+</script>
+<script>"use strict";
 $(document).ready(function() {
     var fillBlueLight = 'rgba(52, 143, 226, 0.2)';
     var strokeBlue = 'rgba(52, 143, 226, 0.8)';
@@ -278,6 +287,7 @@ $(document).ready(function() {
     //Error
     var ctx_1 = $("#line-chart-n1");
     var ctx_2 = $("#line-chart-n2");
+    var ctx2 = $("#points-chart");
     var lineChartData_1 = {
         labels: {{ escala_1 }},
         datasets: [{
@@ -345,6 +355,52 @@ $(document).ready(function() {
                 data: {{ delta_pesos_1[2] }}
             }]
     };
+    var pointChartData = {
+        labels: {{ x_1 }},
+        datasets: [
+            {
+                pointRadius: 3,
+                borderWidth: 2,
+                backgroundColor:'rgba(0,0,0,0)',
+                type: 'scatter',
+                data: [
+                    {
+                        x: 0,
+                        y: 1
+                    },
+                    {
+                        x: 1,
+                        y: 1
+                    }
+                ]
+            },
+            {
+                borderColor: strokeGrey,
+                pointBackgroundColor: 'rgba(0,0,0,0)',
+                backgroundColor:'rgba(0,0,0,0)',
+                pointRadius: 3,
+                borderWidth: 2,
+                data: {{ y_1 }}
+            },
+            {
+                borderColor: strokeGrey,
+                pointBackgroundColor: 'rgba(0,0,0,0)',
+                backgroundColor:'rgba(0,0,0,0)',
+                pointRadius: 3,
+                borderWidth: 2,
+                data: {{ y_2 }}
+            }
+        ]
+    };
+    var points = new Chart(ctx2, {
+        type: 'line',
+        data: pointChartData,
+        options: {
+            legend: {
+                display: false
+            }
+        }
+    });
     var pesosChartData_2 = {
         labels: {{ escala_delta_2 }},
         datasets: [{
